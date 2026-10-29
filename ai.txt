@@ -1,0 +1,2285 @@
+Practical: 1A
+Aim: Implement Breadth First Search (BFS) to traverse a graph
+Code: 
+from collections import deque
+graph = {
+        'A':['B','C'],
+        'B':['A','D','E'],
+        'C':['A','F'],
+        'D':['B'],
+        'E':['B','F'],
+        'F':['C','E']
+    }
+def bfs(graph,start):
+    visited = set()
+    queue = deque([start])
+    visited.add(start)
+    order =[]
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        print("Visting:",node)
+        for nbh in graph[node]:
+            if nbh not in visited:
+                visited.add(nbh)
+                queue.append(nbh)
+    return order
+print("Graph:",graph)
+start_node ="A"
+result = bfs(graph,start_node)
+print(f"\n BFS Traversal Order: {result}")
+
+Output:
+Graph: {'A': ['B', 'C'], 'B': ['A', 'D', 'E'], 'C': ['A', 'F'], 'D': ['B'], 'E': ['B', 'F'], 'F': ['C', 'E']}
+Visting: A
+Visting: B
+Visting: C
+Visting: D
+Visting: E
+Visting: F
+
+ BFS Traversal Order: ['A', 'B', 'C', 'D', 'E', 'F']
+
+
+
+
+ Practical: 1B
+Aim: Implement iterative Depth First Search (DFS) on the same graph.
+Code:
+graph = {
+        'A':['B','C'],
+        'B':['A','D','E'],
+        'C':['A','F'],
+        'D':['B'],
+        'E':['B','F'],
+        'F':['C','E']
+    }
+def dfs_iterative(graph,start):
+    visited = set()
+    stack = [start]
+    order =[]
+    while stack:
+        node=stack.pop()
+        if node not in visited:
+            visited.add(node)
+            order.append(node)
+            print("Visiting:",node)
+            for nbh in reversed(graph[node]):
+                if nbh not in visited:
+                    stack.append(nbh)
+    return order
+#Driver Code
+print("Graph:",graph)
+start_node = 'A'
+result = dfs_iterative(graph,start_node)
+print(f"\nDFS (Iterative) Traversel Order: {result}")
+
+Output:
+Graph: {'A': ['B', 'C'], 'B': ['A', 'D', 'E'], 'C': ['A', 'F'], 'D': ['B'], 'E': ['B', 'F'], 'F': ['C', 'E']}
+Visiting: A
+Visiting: B
+Visiting: D
+Visiting: E
+Visiting: F
+Visiting: C
+
+DFS (Iterative) Traversel Order: ['A', 'B', 'D', 'E', 'F', 'C']
+
+
+
+ Practical: 1C
+Aim: Compare both algorithms on traversal order, time and space efficiency
+Code:
+from collections import deque
+import time
+graph = {
+        'A':['B','C'],
+        'B':['A','D','E'],
+        'C':['A','F'],
+        'D':['B'],
+        'E':['B','F'],
+        'F':['C','E']
+    }
+def bfs(graph,start):
+    visited = set()
+    queue = deque([start])
+    visited.add(start)
+    order =[]
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        print("Visiting:",node)
+        for nbh in graph[node]:
+            if nbh not in visited:
+                visited.add(nbh)
+                queue.append(nbh)
+    return order
+def dfs_iterative(graph,start):
+    visited = set()
+    stack = [start]
+    order =[]
+    while stack:
+        node=stack.pop()
+        if node not in visited:
+            visited.add(node)
+            order.append(node)
+            print("Visiting:",node)
+            for nbh in reversed(graph[node]):
+                if nbh not in visited:
+                    stack.append(nbh)   
+    return order
+#Measure BFS Performance
+start_time = time.time()
+bfs_result = bfs(graph,'A')
+bfs_time = time.time() - start_time
+#Measure DFS Performance
+start_time = time.time()
+dfs_result = dfs_iterative(graph,'A')
+dfs_time = time.time() - start_time
+print("Graph:",graph)
+print(f"\nBFS Traversal: {bfs_result}")
+print(f"\nDFS Traversal: {dfs_result}")
+print("\n--Performance Comparison--")
+print(f"BFS Time Taken: {bfs_time:.8f} seconds")
+print(f"DFS Time Taken: {dfs_time:.8f} seconds")
+print(f"Nodes visited by BFS:{len(bfs_result)}")
+print(f"Nodes visited by BDS:{len(dfs_result)}")
+print(f"Time Complexity (both): O(V+E)")
+print(f"Space Complexity:BFS=O(V),DFS=O(V)")
+
+Output:
+Visiting: A
+Visiting: B
+Visiting: C
+Visiting: D
+Visiting: E
+Visiting: F
+Visiting: A
+Visiting: B
+Visiting: D
+Visiting: E
+Visiting: F
+Visiting: C
+Graph: {'A': ['B', 'C'], 'B': ['A', 'D', 'E'], 'C': ['A', 'F'], 'D': ['B'], 'E': ['B', 'F'], 'F': ['C', 'E']}
+BFS Traversal: ['A', 'B', 'C', 'D', 'E', 'F']
+DFS Traversal: ['A', 'B', 'D', 'E', 'F', 'C']
+--Performance Comparison--
+BFS Time Taken: 0.02869344 seconds
+DFS Time Taken: 0.02487564 seconds
+Nodes visited by BFS:6
+Nodes visited by BDS:6
+Time Complexity (both): O(V+E)
+Space Complexity:BFS=O(V),DFS=O(V)
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Practical 2
+
+A) Aim: Implement the A* Search algorithm for solving a pathfinding problem.
+Solution:
+import heapq
+# Graph with edge costs (weighted graph)
+graph = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'A': 1, 'D': 2, 'E': 5},
+    'C': {'A': 4, 'F': 3},
+    'D': {'B': 2, 'G': 6},
+    'E': {'B': 5, 'G': 2},
+    'F': {'C': 3, 'G': 1},
+    'G': {}
+}
+
+# Heuristic values (estimated straight-line distance to Goal 'G')
+heuristic = {
+    'A': 7, 'B': 6, 'C': 5, 
+    'D': 4, 'E': 2, 'F': 1, 'G': 0
+}
+def astar(graph, start, goal):
+
+    # priority queue stores: (f_value, node, path, g_value)
+    open_list = [(heuristic[start], start, [start], 0)]
+    visited = set()
+    nodes_expanded = 0
+    
+    while open_list:
+        f, node, path, g = heapq.heappop(open_list)
+        nodes_expanded += 1
+
+        # Check if goal is reached when popped
+        if node == goal:
+            return path, g, nodes_expanded            
+        if node in visited:
+            continue
+        visited.add(node)
+        for neighbor, cost in graph[node].items():
+            if neighbor not in visited:
+                new_g = g + cost
+                new_f = new_g + heuristic[neighbor]
+                heapq.heappush(open_list, (new_f, neighbor, path + [neighbor], new_g))
+    return None, float('inf'), nodes_expanded
+
+# Execute the search
+start_node , goal_node ='A ‘,’G’
+path, cost, expanded = astar(graph, start_node, goal_node)
+
+print("Graph:", graph)
+print("Heuristic:", heuristic)
+print(f"\nA* Path from {start_node} to {goal_node}: {path}")
+print(f"Total Cost: {cost}")
+print(f"Nodes Expanded: {expanded}")
+
+OUTPUT:
+Graph: {'A': {'B': 1, 'C': 4}, 'B': {'A': 1, 'D': 2, 'E': 5}, 'C': {'A': 4, 'F': 3}, 'D': {'B': 2, 'G': 6}, 'E': {'B': 5, 'G': 2}, 'F': {'C': 3, 'G': 1}, 'G': {}}
+Heuristic: {'A': 7, 'B': 6, 'C': 5, 'D': 4, 'E': 2, 'F': 1, 'G': 0}
+
+A* Path from A to G: ['A', 'B', 'E', 'G']
+Total Cost: 8
+Nodes Expanded: 5
+
+
+
+
+
+
+B) Aim: Implement the Recursive Best-First Search algorithm for the same problem.
+Solution:
+import heapq
+graph = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'A': 1, 'D': 2, 'E': 5},
+    'C': {'A': 4, 'F': 3},
+    'D': {'B': 2, 'G': 6},
+    'E': {'B': 5, 'G': 2},
+    'F': {'C': 3, 'G': 1},
+    'G': {}
+}
+heuristic = {
+    'A': 7,'B': 6,  'C': 5,  'D': 4, 'E': 2, 'F': 1, 'G': 0
+}
+
+INFINITY =float('inf')
+nodes_expanded = 0
+
+def rbfs(node, goal, g, f_limit,path):
+    global nodes_expanded
+    nodes_expanded += 1
+
+    if node ==goal:
+        return path,g
+#Generate successors with their f-values
+    successors = []
+    for neighbor, cost in graph[node].items():
+        new_g = g + cost
+        f_value = max(new_g + heuristic[neighbor],
+                      g + heuristic[node])
+        successors.append([f_value, neighbor, new_g])
+
+    if not successors:
+        return None, INFINITY
+
+    while True:
+        successors.sort()
+        best = successors[0]
+
+        if best[0] > f_limit:
+            return None, best[0]
+
+ #second best f-value (used as alternative limit)      
+ alternative = successors[1][0] if len(successors) > 1 else INFINITY
+
+        result, best[0] = rbfs( best[1],goal,best[2],min(f_limit, alternative),path + [best[1]])
+        if result is not None:
+            return result, best[0]
+# Driver Code
+start_node ,goal_node ='A', 'G'
+result_path, result_cost = rbfs(start_node,goal_node, 0,INFINITY,
+    [start_node])
+print("Graph:", graph)
+print("Heuristic:", heuristic)
+print(f"\nRBFS Path from {start_node} to {goal_node}: {result_path}")
+print(f"Total Cost: {result_cost}")
+print(f"Nodes Expanded: {nodes_expanded}")
+
+  OUTPUT:
+Graph: {'A': {'B': 1, 'C': 4}, 'B': {'A': 1, 'D': 2, 'E': 5}, 'C': {'A': 4, 'F': 3}, 'D': {'B': 2, 'G': 6}, 'E': {'B': 5, 'G': 2}, 'F': {'C': 3, 'G': 1}, 'G': {}}
+Heuristic: {'A': 7, 'B': 6, 'C': 5, 'D': 4, 'E': 2, 'F': 1, 'G': 0}
+
+
+
+
+C) Aim: Compare the performance and effectiveness of both algorithms.
+Solution:
+import heapq
+import time
+graph = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'A': 1, 'D': 2, 'E': 5},
+    'C': {'A': 4, 'F': 3},
+    'D': {'B': 2, 'G': 6},
+    'E': {'B': 5, 'G': 2},
+    'F': {'C': 3, 'G': 1},
+    'G': {}
+}
+heuristic = { 'A': 7, 'B': 6, 'C': 5,'D': 4, 'E': 2,'F': 1,'G': 0}
+
+INFINITY = float('inf')
+def astar(graph, start, goal):
+    open_list = [(heuristic[start], start, [start], 0)]
+    visited = set()
+    nodes_expanded = 0
+    while open_list:
+        f, node, path, g = heapq.heappop(open_list)
+        nodes_expanded += 1
+        if node == goal:
+            return path, g, nodes_expanded
+        if node in visited:
+            continue
+        visited.add(node)
+        for neighbor, cost in graph[node].items():
+            if neighbor not in visited:
+                new_g = g + cost
+                new_f = new_g + heuristic[neighbor]
+                heapq.heappush(open_list, (new_f, neighbor, path + [neighbor], new_g))
+    return None, INFINITY, nodes_expanded
+rbfs_expanded = 0
+def rbfs(node, goal, g, f_limit, path):
+    global rbfs_expanded
+    rbfs_expanded += 1
+    if node == goal:
+        return path, g
+    successors = []
+    for neighbor, cost in graph[node].items():
+        if neighbor not in path:
+            new_g = g + cost
+            f = new_g + heuristic[neighbor]
+            successors.append([f, neighbor, new_g])
+    if not successors:
+        return None, INFINITY
+
+    while True:
+        successors.sort(key=lambda x: x[0])
+        best = successors[0]
+        if best[0] > f_limit:
+            return None, best[0]
+        alternative = successors[1][0] if len(successors) > 1 else INFINITY
+        result, best_f = rbfs(
+            best[1],
+            goal,
+            best[2],
+            min(f_limit, alternative),
+            path + [best[1]]
+        )
+
+        best[0] = best_f
+        if result is not None:
+            return result, best_f
+start_node = 'A'
+goal_node = 'G'
+start_time = time.time()
+astar_path, astar_cost, astar_expanded = astar(graph, start_node, goal_node)
+astar_time = time.time() - start_time
+rbfs_expanded = 0
+start_time = time.time()
+rbfs_path, rbfs_cost = rbfs(start_node, goal_node, 0, INFINITY, [start_node])
+rbfs_time = time.time() - start_time
+print("\n--- A* Result ---")
+print("Path:", astar_path)
+print("Cost:", astar_cost)
+print("Nodes Expanded:", astar_expanded)
+
+print("\n--- RBFS Result ---")
+print("Path:", rbfs_path)
+print("Cost:", rbfs_cost)
+print("Nodes Expanded:", rbfs_expanded)
+
+print("\n--- Comparison ---")
+print(f"{'Metric':<20}{'A*':<10}{'RBFS'}")
+print(f"{'Cost':<20}{astar_cost:<10}{rbfs_cost}")
+print(f"{'Nodes Expanded':<20}{astar_expanded:<10}{rbfs_expanded}")
+
+
+OUTPUT:
+
+
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+Practical 3: Decision Tree Learning
+1. Implement the Decision Tree Learning algorithm to build a decision tree for a given dataset. 
+2. Evaluate the accuracy and effectiveness of the decision tree on test data. 
+3. Visualize and interpret the generated decision tree.
+
+3A) Implement the decision tree learning algorithm to build a decision tree for a given dataset
+
+Solution:
+from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+iris = load_iris()
+x,y = iris.data, iris.target
+x_train, x_test, y_train, y_test = train_test_split(x,y, test_size=0.3,random_state=42)
+model = DecisionTreeClassifier(criterion='entropy', max_depth=3, random_state=42)
+model.fit(x_train, y_train)
+print("Decision Tree trained Successfully!")
+print(f"Feature names: {iris.feature_names}")
+print(f"Class names: {iris.target_names}")
+print(f"Number of training samples: {len(x_train)}")
+print(f"Number of testing samples: {len(x_test)}")
+Output:
+Decision Tree trained Successfully!
+Feature names: ['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']
+Class names: ['setosa' 'versicolor' 'virginica']
+Number of training samples: 105
+Number of testing samples: 45
+
+3b) Evaluate the accuracy and effectiveness of the decision tree on test data.
+Code:
+from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+iris = load_iris()
+x,y = iris.data, iris.target
+x_train, x_test, y_train, y_test = train_test_split(x,y, test_size=0.3,random_state=42)
+
+model = DecisionTreeClassifier(criterion='entropy', max_depth=3, random_state=42)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+
+print("Predicted labels:", y_pred)
+print("Actual labels:   ", y_test)
+print(f"\nAccuracy: {accuracy * 100:.2f}%")
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
+
+
+
+Solution:
+ Predicted labels: [1 0 2 1 2 0 1 2 1 1 2 0 0 0 0 1 2 1 1 2 0 2 0 2 2 2 2 2 0 0 0 0 1 0 0 2 1 0 0 0 2 1 1 0 0]
+Actual labels:    [1 0 2 1 1 0 1 2 1 1 2 0 0 0 0 1 2 1 1 2 0 2 0 2 2 2 2 2 0 0 0 0 1 0 0 2 1 0 0 0 2 1 1 0 0]
+
+Accuracy: 97.78%
+
+Confusion Matrix:
+[[19  0  0]
+ [ 0 12  1]
+ [ 0  0 13]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+      setosa       1.00      1.00      1.00        19
+  versicolor       1.00      0.92      0.96        13
+   virginica       0.93      1.00      0.96        13
+
+    accuracy                           0.98        45
+   macro avg       0.98      0.97      0.97        45
+weighted avg       0.98      0.98      0.98        45
+
+
+
+
+3c) Visualize and interpret the generated decision tree
+Solution:
+from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+
+iris = load_iris()
+X, y = iris.data, iris.target
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+model = DecisionTreeClassifier(criterion='entropy', max_depth=3, random_state=42)
+model.fit(X_train, y_train)
+plt.figure(figsize=(14, 8))
+plot_tree(model,
+          feature_names=iris.feature_names,
+          class_names=iris.target_names,
+          filled=True,
+          rounded=True,
+          fontsize=10)
+plt.title("Decision Tree for Iris Dataset")
+plt.savefig("decision_tree.png") 
+plt.show()
+
+from sklearn.tree import export_text
+tree_rules = export_text(model, feature_names=list(iris.feature_names))
+print("Decision Tree Rules:\n")
+print(tree_rules)
+
+Output:
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+Practical 4: Feed Forward Backpropagation Neural Network
+1.  Implement the Feed Forward Backpropagation algorithm
+2.  Use a given dataset to train the neural network for a specific task.
+3.  Evaluate the performance of the trained network on test data.
+
+4a) Implement the Feed Forward Backpropagation algorithm
+Solution:
+import numpy as np
+
+class NeuralNetwork:
+    def __init__(self, input_size, hidden_size, output_size, lr=0.1):
+        np.random.seed(1) 
+        self.W1 = np.random.uniform(-1, 1, (input_size, hidden_size))
+        self.b1= np.zeros((1, hidden_size))
+        self.W2 = np.random.uniform(-1, 1, (hidden_size, output_size))
+        self.b2= np.zeros((1, output_size))
+        self.lr = lr
+
+    def sigmoid(self, x): 
+        return 1 / (1 + np.exp(-x))
+
+    def sigmoid_derivative(self, x): 
+        return x * (1-x)
+
+    def forward(self, X):
+        self.z1 = np.dot(X, self.W1) + self.b1
+        self.a1 = self.sigmoid(self.z1)
+        self.z2 = np.dot(self.a1, self.W2) + self.b2
+        self.a2 = self.sigmoid(self.z2)
+        return self.a2
+
+    def backward(self, X, y, output):
+        error_output = y - output
+        d_output = error_output * self.sigmoid_derivative(output)
+        error_hidden = d_output.dot(self.W2.T)
+        d_hidden = error_hidden * self.sigmoid_derivative(self.a1)
+        self.W2 += self.a1.T.dot(d_output) * self.lr
+        self.b2 += np.sum(d_output, axis = 0, keepdims=True) * self.lr
+        self.W1 += X.T.dot(d_hidden) * self.lr
+        self.b1 += np.sum(d_hidden, axis=0, keepdims=True) * self.lr
+        return np.mean(np.square(error_output))
+
+X_train = np.array([[0,0],
+                    [0,1],
+                    [1,0],
+                    [1,1]])
+
+y_train = np.array([[0],
+                    [1],
+                    [1],
+                    [0]])
+
+nn = NeuralNetwork(input_size=2, hidden_size=4, output_size=1, lr=0.5)
+epochs = 5000
+
+print("Training Started")
+
+for epoch in range(epochs):
+    output = nn.forward(X_train)
+    loss = nn.backward(X_train, y_train, output)   
+    if epoch % 500 == 0:
+        print("Epoch: ", epoch, "Loss: ", round(loss,5))
+
+print("Training Completed")
+
+X_test = X_train
+y_test = y_train
+
+predictions = nn.forward(X_test)
+predicted_labels = (predictions > 0.5).astype(int)
+
+print("\nTEST DATA RESULTS")
+
+for i in range(len(X_test)):
+    print("Input:",X_test[i],
+          "Expected:",y_test[i][0],
+          "Predicted:",predicted_labels[i][0],
+          "Raw Output:", round(predictions[i][0],4))
+
+accuarcy =np.mean(predicted_labels == y_test) * 100
+print("\nAccuracy:", round(accuarcy, 2), "%")
+    
+
+
+Output:
+
+Training Started
+Epoch:  0 Loss:  0.24973
+Epoch:  500 Loss:  0.15656
+Epoch:  1000 Loss:  0.01722
+Epoch:  1500 Loss:  0.00513
+Epoch:  2000 Loss:  0.00277
+Epoch:  2500 Loss:  0.00185
+Epoch:  3000 Loss:  0.00137
+Epoch:  3500 Loss:  0.00108
+Epoch:  4000 Loss:  0.00089
+Epoch:  4500 Loss:  0.00076
+Training Completed
+
+TEST DATA RESULTS
+Input: [0 0] Expected: 0 Predicted: 0 Raw Output: 0.0219
+Input: [0 1] Expected: 1 Predicted: 1 Raw Output: 0.9713
+Input: [1 0] Expected: 1 Predicted: 1 Raw Output: 0.9815
+Input: [1 1] Expected: 0 Predicted: 0 Raw Output: 0.0312        
+
+
+
+
+
+
+
+
+4b) Use a given dataset to train the neural network for a specific task.
+
+Solution:
+import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+
+iris = load_iris()
+
+X = iris.data
+y = iris.target.reshape(-1, 1)
+
+encoder = OneHotEncoder(sparse_output=False)
+y_encoded = encoder.fit_transform(y)
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y_encoded, test_size=0.2, random_state=42 )
+
+class NeuralNetwork:
+    def __init__(self, input_size, hidden_size, output_size, lr=0.1):
+        np.random.seed(0)
+        self.W1 = np.random.randn(input_size, hidden_size) * 0.1
+        self.b1= np.zeros((1, hidden_size))
+        self.W2 = np.random.randn(hidden_size, output_size) * 0.1
+        self.b2= np.zeros((1, output_size))
+        self.lr = lr
+        
+    def sigmoid(self, x): 
+        return 1 / (1 + np.exp(-x))
+    
+    def sigmoid_derivative(self, x): 
+        return x * (1-x)
+    
+    def forward(self, X):
+        self.z1 = np.dot(X, self.W1) + self.b1
+        self.a1 = self.sigmoid(self.z1)
+        self.z2 = np.dot(self.a1, self.W2) + self.b2
+        self.a2 = self.sigmoid(self.z2)
+        return self.a2
+
+    def backward(self, X, y, output):
+        error_output = y - output
+        d_output = error_output * self.sigmoid_derivative(output)
+        error_hidden = d_output.dot(self.W2.T)
+        d_hidden = error_hidden * self.sigmoid_derivative(self.a1)
+        self.W2 += self.a1.T.dot(d_output) * self.lr
+        self.b2 += np.sum(d_output, axis = 0, keepdims=True) * self.lr
+        self.W1 += X.T.dot(d_hidden) * self.lr
+        self.b1 += np.sum(d_hidden, axis=0, keepdims=True) * self.lr
+        return np.mean(np.square(error_output))
+
+nn = NeuralNetwork(input_size=4, hidden_size=6, output_size=3, lr=0.1)
+epochs = 3000
+
+print("Training Started")
+
+for epoch in range(epochs):
+    output = nn.forward(X_train)
+    loss = nn.backward(X_train, y_train, output)   
+    if epoch % 500 == 0:
+        print("Epoch: ", epoch, "Loss: ", round(loss,5))
+       
+print("Training Completed")
+
+predictions = nn.forward(X_test)
+predicted_labels = np.argmax(predictions, axis=1)
+actual_labels = np.argmax(y_test, axis=1)
+
+accuracy =np.mean(predicted_labels == actual_labels) * 100
+
+print("\nTEST DATA RESULTS")
+
+for i in range(len(X_test)):
+    print("Actual: ",actual_labels[i], "Predicted:", predicted_labels[i])
+    
+print("\nAccuracy:", round(accuracy, 2), "%")
+    
+
+
+
+
+
+Output:
+Training Started
+Epoch:  0 Loss:  0.25069
+Epoch:  500 Loss:  0.01043
+Epoch:  1000 Loss:  0.01008
+Epoch:  1500 Loss:  0.00979
+Epoch:  2000 Loss:  0.00896
+Epoch:  2500 Loss:  0.00798
+Training Completed
+
+TEST DATA RESULTS
+Actual:  1 Predicted: 1
+Actual:  0 Predicted: 0
+Actual:  2 Predicted: 2
+Actual:  1 Predicted: 1
+Actual:  1 Predicted: 1
+Actual:  0 Predicted: 0
+Actual:  1 Predicted: 1
+Actual:  2 Predicted: 2
+Actual:  1 Predicted: 1
+Actual:  1 Predicted: 1
+Actual:  2 Predicted: 2
+Actual:  0 Predicted: 0
+Actual:  0 Predicted: 0
+Actual:  0 Predicted: 0
+Actual:  0 Predicted: 0
+Actual:  1 Predicted: 1
+Actual:  2 Predicted: 2
+Actual:  1 Predicted: 1
+Actual:  1 Predicted: 1
+Actual:  2 Predicted: 2
+Actual:  0 Predicted: 0
+Actual:  2 Predicted: 2
+Actual:  0 Predicted: 0
+Actual:  2 Predicted: 2
+Actual:  2 Predicted: 2
+Actual:  2 Predicted: 2
+Actual:  2 Predicted: 2
+Actual:  2 Predicted: 2
+Actual:  0 Predicted: 0
+Actual:  0 Predicted: 0
+
+Accuracy: 100.0 %
+
+4c) Evaluate the performance of the trained network on test data
+Solution:
+import numpy as np
+
+#-------------Dataset-----------------
+#Input : hours studied , output : marks scored (out of 100),scaled to 0-1
+
+hours = np.array([1,2,3,4,5,6,7,8,9,10], dtype=float).reshape(-1,1)
+
+marks = np.array([15,28,35,45,53,61,70,82,88,95], dtype=float).reshape(-1,1)
+
+#normalise data between 0 and 1 
+X = hours / np.max(hours)
+y = marks / 100.0
+
+X_train, X_test = X[:8], X[8:]
+y_train, y_test = y[:8], y[8:]
+
+class NeuralNetwork:
+    def __init__(self, input_size, hidden_size, output_size, lr=0.1):
+        np.random.seed(2)
+        self.W1 = np.random.uniform(-1, 1, (input_size, hidden_size))
+        self.b1= np.zeros((1, hidden_size))
+        self.W2 = np.random.uniform(-1, 1, (hidden_size, output_size))
+        self.b2= np.zeros((1, output_size))
+        self.lr = lr
+        
+    def sigmoid(self, x): 
+        return 1 / (1 + np.exp(-x))
+    
+    def sigmoid_derivative(self, x): 
+        return x * ( 1 - x )
+    
+    def forward(self, X):
+        self.z1 = np.dot(X, self.W1) + self.b1
+        self.a1 = self.sigmoid(self.z1)
+        self.z2 = np.dot(self.a1, self.W2) + self.b2
+        self.a2 = self.sigmoid(self.z2)
+        return self.a2
+
+    def backward(self, X, y, output):
+        error = y - output
+        
+        d_output = error * self.sigmoid_derivative(output)
+        error_hidden = d_output.dot(self.W2.T)
+        d_hidden = error_hidden * self.sigmoid_derivative(self.a1)
+        self.W2 += self.a1.T.dot(d_output) * self.lr
+        self.b2 += np.sum(d_output, axis = 0, keepdims=True) * self.lr
+        
+        self.W1 += X.T.dot(d_hidden) * self.lr
+        self.b1 += np.sum(d_hidden, axis=0, keepdims=True) * self.lr
+        
+        return np.mean(np.square(error))
+    
+nn = NeuralNetwork(input_size=1, hidden_size=5, output_size=1, lr=0.5)
+    
+epochs = 5000
+
+print("---- Training Started ----")
+
+for epoch in range(epochs):
+    output = nn.forward(X_train)
+    loss = nn.backward(X_train, y_train, output)   
+    if epoch % 500 == 0:
+        print(f"Epoch: {epoch:5d}, Loss (MSE) {loss:.5f}")
+print("---- Training Completed ----")    
+
+predictions = nn.forward(X_test) * 100
+
+actual = y_test * 100
+
+print("---- EVALUATION ON TEST DATA ----")
+
+for i in range(len(X_test)):
+    print(f"Hours: {hours[8+i][0]:.0f} Actual Marks: {actual[i][0]:.1f} Predicted Marks: {predictions[i][0]:.1f}")
+mae = np.mean(np.abs(predictions - actual))
+
+print(f"\nMean Absolute Error on test data: {mae:.2f} marks")
+    
+    
+
+
+Output:
+---- Training Started ----
+Epoch:     0, Loss (MSE) 0.06353
+Epoch:   500, Loss (MSE) 0.00067
+Epoch:  1000, Loss (MSE) 0.00064
+Epoch:  1500, Loss (MSE) 0.00063
+Epoch:  2000, Loss (MSE) 0.00062
+Epoch:  2500, Loss (MSE) 0.00061
+Epoch:  3000, Loss (MSE) 0.00060
+Epoch:  3500, Loss (MSE) 0.00060
+Epoch:  4000, Loss (MSE) 0.00059
+Epoch:  4500, Loss (MSE) 0.00059
+---- Training Completed ----
+---- EVALUATION ON TEST DATA ----
+Hours: 9 Actual Marks: 88.0 Predicted Marks: 83.6
+Hours: 10 Actual Marks: 95.0 Predicted Marks: 87.3
+
+Mean Absolute Error on test data: 6.08 marks
+
+
+
+========================================================================================================
+
+
+Practical 5: Support Vector Machines (SVM)
+1.  Implement The SVM algorithm for binary classification.
+2.  Train an SVM Model using a given dataset and optimize its parameters.
+3.   Evaluate the performance of the SVM Model on test data and analyze the results.
+
+5a) Implement the SVM algorithm for binary classification
+Solution:
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, confusion_matrix, confusion_matrix, classification_report 
+
+data = load_breast_cancer()
+
+X = data.data 
+y = data.target # 0 = maligant , 1 = benign
+
+X_train , X_test, y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# train svm = optimize parameters
+
+param_grid = {'C':[0.1,1,10],'gamma':[0.01,0.1,1],'kernel':['linear','rbf']}
+grid_search = GridSearchCV(SVC(),param_grid,cv=5)
+grid_search.fit(X_train, y_train)
+
+print("--------Best PARAMETERS FOUND ----------")
+
+print(grid_search.best_params_)
+best_svm = grid_search.best_estimator_
+
+y_pred = best_svm.predict(X_test)
+
+print("\n--------EVALUATION ON TEST DATA--------")
+
+print(f"Accuracy: {accuracy_score(y_test,y_pred)} * 100:.2f")
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred,target_names=data.target_names))
+
+
+
+
+
+
+Output:
+--------Best PARAMETERS FOUND ----------
+{'C': 0.1, 'gamma': 0.01, 'kernel': 'linear'}
+
+--------EVALUATION ON TEST DATA--------
+Accuracy: 0.9824561403508771 * 100:.2f
+
+Confusion Matrix:
+[[41  2]
+ [ 0 71]]
+
+Classification Report:
+              precision    recall f1-score   support
+
+   malignant       1.00      0.95      0.98        43
+        benign       0.97      1.00      0.99        71
+
+        accuracy                                 0.98      114
+     macro avg       0.99      0.98      0.98       114
+weighted avg       0.98      0.98      0.98       114
+
+
+
+
+5b) Train an SVM Model using a given dataset and optimize its parameters
+Solution:
+import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+iris = load_iris()
+X = iris.data
+y = iris.target
+mask = y != 2
+X = X[mask]
+y = y[mask]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+param_grid = {'C': [0.1, 1, 10], 'gamma': [0.01, 0.1, 1], 'kernel': ['linear', 'rbf']}
+grid_search = GridSearchCV(SVC (), param_grid, cv=5)
+grid_search.fit(X_train, y_train)
+
+print ("--------Best PARAMETERS FOUND ----------")
+print(grid_search.best_params_)
+best_svm = grid_search.best_estimator_
+y_pred = best_svm.predict(X_test)
+
+print("\n--------EVALUATION ON TEST DATA--------")
+print(f"Accuracy: {accuracy_score(y_test, y_pred) * 100:.2f}%")
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=iris.target_names[:2]))
+Output:
+--------Best PARAMETERS FOUND ----------
+{'C': 0.1, 'gamma': 0.01, 'kernel': 'linear'}
+--------EVALUATION ON TEST DATA--------
+Accuracy: 100.00%
+
+Confusion Matrix:
+[[14  0]
+ [ 0 11]]
+Classification Report:
+              precision    recall f1-score   support
+
+      setosa       1.00      1.00      1.00        14
+  versicolor       1.00      1.00      1.00        11
+
+    accuracy                           1.00        25
+   macro avg       1.00      1.00      1.00        25
+weighted avg       1.00      1.00      1.00        25
+
+
+5c) Evaluate the performance of the SVM model on test data and analyse the results.
+Solution:
+import numpy as np
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split,GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score,confusion_matrix, classification_report
+
+X, y = make_classification(
+    n_samples=200, n_features=2,n_informative=2,n_redundant=0,n_clusters_per_class=1, class_sep=1.5, random_state=42 )
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42 )
+
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+param_grid = {'C':[0.1,1,10],'gamma':[0.01,0.1,1],'kernel':['linear','rbf']}
+
+grid_search = GridSearchCV(SVC(),param_grid,cv=5)
+grid_search.fit(X_train, y_train)
+
+
+print("--------Best PARAMETERS FOUND ----------")
+print(grid_search.best_params_)
+
+best_svm = grid_search.best_estimator_
+print(f"Number of supported Vectors: {best_svm.n_support_}")
+
+y_pred = best_svm.predict(X_test)
+
+print("\n--------EVALUATION ON TEST DATA--------")
+
+print(f"Accuracy: {accuracy_score(y_test,y_pred)} * 100:.2f")
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred,target_names=['Class 0', 'Class 1']))
+
+Output:
+--------Best PARAMETERS FOUND ----------
+{'C': 0.1, 'gamma': 0.01, 'kernel': 'linear'}
+Number of supported Vectors: [32 31]
+
+--------EVALUATION ON TEST DATA--------
+Accuracy: 0.975 * 100:.2f
+
+Confusion Matrix:
+[[22  1]
+ [ 0 17]]
+
+Classification Report:
+              precision    recall   f1-score   support
+
+     Class 0       1.00      0.96      0.98        23
+     Class 1       0.94      1.00      0.97        17
+
+    accuracy                           0.97        40
+   macro avg       0.97      0.98      0.97        40	
+weighted avg       0.98      0.97      0.98        40
+
+
+
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+Practical 6: AdaBoost Algorithm – Ensemble of Weak Classifiers
+1. Implement the Adaboost algorithm to create an ensemble of weak classifiers.
+2. Train the ensemble model on a given dataset and evaluate its performance.
+3. Compare the results with individual weak classifiers.
+
+6a) Implement the Adaboost algorithm to create an ensemble of weak classifiers.
+Solution:
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix,classification_report 
+
+data = load_breast_cancer()
+X = data.data 
+y = data.target # 0 = maligant , 1 = benign
+
+X_train , X_test, y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)
+
+weak_learner = DecisionTreeClassifier(max_depth=1)
+
+ada_model = AdaBoostClassifier(
+    estimator=weak_learner,
+    n_estimators=50,
+    learning_rate=1.0,
+    random_state=42
+)
+
+ada_model.fit(X_train, y_train)
+
+y_pred = ada_model.predict(X_test)
+
+accuracy = accuracy_score(y_test, y_pred)
+
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+report = classification_report(y_test,y_pred,target_names = data.target_names)
+
+print("---- AdaBoost ENSEMBLE TRAINED ----")
+print(f"Number of the weak classifiers used: {ada_model.n_estimators}")
+
+print("\n---- EVALUATION ON TEST DATA ----")
+print(f"Accuracy: {accuracy *  100:.2f}%")
+
+print("\nConfusion Matrix:")
+print(conf_matrix)
+
+print("\nClassification Report:")
+print(report)
+
+
+
+
+
+Output:
+---- AdaBoost ENSEMBLE TRAINED ----
+Number of the weak classifiers used: 50
+
+---- EVALUATION ON TEST DATA ----
+Accuracy: 96.49%
+
+Confusion Matrix:
+[[40  3]
+ [ 1 70]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+   malignant       0.98      0.93      0.95        43
+      benign       0.96      0.99      0.97        71
+
+    accuracy                           0.96       114
+   macro avg       0.97      0.96      0.96       114
+weighted avg       0.97      0.96      0.96       114
+
+
+ 6b) Train the ensemble model on a given dataset and evaluate its performance.
+Solution:
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix,classification_report
+
+data = load_breast_cancer()
+X = data.data 
+y = data.target # 0 = maligant , 1 = benign 
+
+X_train , X_test, y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)
+
+weak_learner = DecisionTreeClassifier(max_depth=1)
+
+ada_model = AdaBoostClassifier(
+    estimator=weak_learner,
+    n_estimators=50,
+    learning_rate=1.0,
+    random_state=42
+)
+
+ada_model.fit(X_train, y_train)
+print("---- ENSEMBLE MODEL TRAINED SUCCESSFULLY ----")
+y_pred = ada_model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+conf_matrix = confusion_matrix(y_test, y_pred)
+report = classification_report(y_test,y_pred,target_names = data.target_names)
+
+print("\n---- EVALUATION ON TEST DATA ----")
+print(f"Accuracy: {accuracy *  100:.2f}%")
+print("\nConfusion Matrix:")
+print(conf_matrix)
+print("\nClassification Report:")
+print(report)
+
+Output:
+---- ENSEMBLE MODEL TRAINED SUCCESSFULLY ----
+---- EVALUATION ON TEST DATA ----
+Accuracy: 96.49%
+Confusion Matrix:
+[[40  3]
+ [ 1 70]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+   malignant       0.98      0.93      0.95        43
+      benign       0.96      0.99      0.97        71
+
+    accuracy                           0.96       114
+   macro avg       0.97      0.96      0.96       114
+weighted avg       0.97      0.96      0.96       114
+6c) Compare the results with individual weak classifiers. 
+Solution:
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.metrics import accuracy_score
+
+data = load_breast_cancer()
+X = data.data 
+y = data.target # 0 = maligant , 1 = benign 
+
+X_train , X_test, y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)
+
+weak_learner = DecisionTreeClassifier(max_depth=1)
+
+ada_model = AdaBoostClassifier(
+    estimator=weak_learner,
+    n_estimators=50,
+    learning_rate=1.0,
+    random_state=42  )
+
+ada_model.fit(X_train, y_train)
+ada_pred = ada_model.predict(X_test)
+ada_accuracy = accuracy_score(y_test, ada_pred)
+individual_accuracies = []
+
+for i in range(5):
+    stump = ada_model.estimators_[i]
+    pred = stump.predict(X_test)
+    acc = accuracy_score(y_test, pred)
+    individual_accuracies.append(acc)
+    print(f"Weak Classifier {i+1} (Descision Stump) Accuracy: {acc * 100:.2f}%")
+    
+single_stump = DecisionTreeClassifier(max_depth=1, random_state=42)
+single_stump.fit(X_train, y_train)
+single_pred = single_stump.predict(X_test)
+single_accuracy = accuracy_score(y_test, single_pred)
+
+print("\n---- COMPARISON: ENSEMBLE vs INDIVIUAL WEAK CLASSIFIERS ----")
+print(f"Standalone Decision Stump Accuracy: {single_accuracy *  100:.2f}%")
+
+print(f"Average of 5 Weak Classifiers from Ensemble: {(sum(individual_accuracies)/len(individual_accuracies))*100:.2f}%")
+print(f"AdaBoost Ensemble (50 Weak Classifiers): {ada_accuracy * 100:.2f}%")
+print("\nObservation:")
+print("Individual weak Classifiers perform only slightly better than random guessing,")
+print("while the AdaBoost ensemble combines them to achieve much higher accuracy.")
+
+
+
+
+
+
+
+
+Output:
+Weak Classifier 1 (Descision Stump) Accuracy: 89.47%
+Weak Classifier 2 (Descision Stump) Accuracy: 94.74%
+Weak Classifier 3 (Descision Stump) Accuracy: 65.79%
+Weak Classifier 4 (Descision Stump) Accuracy: 91.23%
+Weak Classifier 5 (Descision Stump) Accuracy: 69.30%
+
+---- COMPARISON: ENSEMBLE  VS  INDIVIUAL WEAK CLASSIFIERS ----
+Standalone Decision Stump Accuracy: 89.47%
+Average of 5 Weak Classifiers from Ensemble: 82.11%
+AdaBoost Ensemble (50 Weak Classifiers): 96.49%
+
+Observation:
+Individual weak Classifiers perform only slightly better than random guessing,
+while the AdaBoost ensemble combines them to achieve much higher accuracy.
+
+(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((
+
+Practical 7: Naive Bayes’ Classifier
+
+1. Implement the Naive Bayes’ algorithm for classification.
+
+2. Train  a  Naive  Bayes’ model  using  a  given  dataset  and  calculate  class probabilities.
+
+3. Evaluate the accuracy of the model on test data and analyze the results
+
+7a) Implement the Naive Bayes' algorithm for classification.
+
+Solution:
+
+from sklearn.datasets import load_iris
+
+from sklearn.model_selection import train_test_split
+
+from sklearn.naive_bayes import GaussianNB
+
+from sklearn.metrics import accuracy_score
+
+data = load_iris()
+
+X= data.data
+
+y = data.target
+
+X_train , X_test, y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)
+
+model = GaussianNB()
+
+model.fit(X_train, y_train)
+
+print("---- NAIVE BAYES MODEL TRAINED SUCCESSFULLY ----")
+
+y_pred = model.predict(X_test)
+
+print("\nActual Labels :", y_test)
+
+print("Predicted Labels: ", y_pred)
+
+accuracy = accuracy_score(y_test, y_pred)
+
+print(f"Accuracy: {accuracy *  100:.2f}%")
+
+Output: 
+
+---- NAIVE BAYES MODEL TRAINED SUCCESSFULLY ----
+
+Actual Labels: [1 0 2 1 1 0 1 2 1 1 2 0 0 0 0 1 2 1 1 2 0 2 0 2 2 2 2 2 0 0]
+
+Predicted Labels:  [1 0 2 1 1 0 1 2 1 1 2 0 0 0 0 1 2 1 1 2 0 2 0 2 2 2 2 2 0 0]
+
+Accuracy: 100.00%
+
+7b) Train  a  Naive  Bayes’ model  using  a  given  dataset  and  calculate  class probabilities.
+
+Solution:
+
+import numpy as np
+
+from sklearn.datasets import load_iris
+
+from sklearn.model_selection import train_test_split
+
+from sklearn.naive_bayes import GaussianNB
+
+data = load_iris()
+
+X = data.data 
+
+y = data.target
+
+class_names = data.target_names
+
+X_train , X_test, y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)
+
+model = GaussianNB()
+
+model.fit(X_train, y_train)
+
+print("---- NAIVE BAYES MODEL TRAINED SUCCESSFULLY ----")
+
+probabilities = model.predict_proba(X_test)
+
+print("\n---- CLASS PROBABILITIES FOR FIRST 5 TEST SAMPLES ----")
+
+print(f"Classes: {list(class_names)}\n")
+
+for i in range(5):
+
+    print(f"Sample {i+1}: {X_test[i]}")
+
+    print(f" P(setosa) = {probabilities[i][0]:.4f}")
+
+    print(f" P(versicolor) = {probabilities[i][0]:.4f}")
+
+    print(f" P(virginica) = {probabilities[i][0]:.4f}")
+
+    
+
+    predicted_class = class_names[np.argmax(probabilities[i])]
+
+    print(f" --> Predicted Class: {predicted_class}\n")
+
+    print("---- PRIOR PROBABILITIES P(class) LEARNED FROM TRAINING DATA ---")
+
+    for cls, prior in zip(class_names, model.class_prior_):
+
+        print(f"P({cls}) = {prior:.14f}")
+
+        
+
+Output:
+
+---- NAIVE BAYES MODEL TRAINED SUCCESSFULLY ----
+
+---- CLASS PROBABILITIES FOR FIRST 5 TEST SAMPLES ----
+
+Classes: [np.str_('setosa'), np.str_('versicolor'), np.str_('virginica')]
+
+Sample 1: [6.1 2.8 4.7 1.2]
+
+ P(setosa) = 0.0000
+
+ P(versicolor) = 0.0000
+
+ P(virginica) = 0.0000
+
+ --> Predicted Class: versicolor
+
+---- PRIOR PROBABILITIES P(class) LEARNED FROM TRAINING DATA ----
+
+P(setosa) = 0.33333333333333
+
+P(versicolor) = 0.34166666666667
+
+P(virginica) = 0.32500000000000
+
+Sample 2: [5.7 3.8 1.7 0.3]
+
+ P(setosa) = 1.0000
+
+ P(versicolor) = 1.0000
+
+ P(virginica) = 1.0000
+
+ --> Predicted Class: setosa
+
+---- PRIOR PROBABILITIES P(class) LEARNED FROM TRAINING DATA ----
+
+P(setosa) = 0.33333333333333
+
+P(versicolor) = 0.34166666666667
+
+P(virginica) = 0.32500000000000
+
+Sample 3: [7.7 2.6 6.9 2.3]
+
+ P(setosa) = 0.0000
+
+ P(versicolor) = 0.0000
+
+ P(virginica) = 0.0000
+
+ --> Predicted Class: virginica
+
+---- PRIOR PROBABILITIES P(class) LEARNED FROM TRAINING DATA ----
+
+P(setosa) = 0.33333333333333
+
+P(versicolor) = 0.34166666666667
+
+P(virginica) = 0.32500000000000
+
+Sample 4: [6.  2.9 4.5 1.5]
+
+ P(setosa) = 0.0000
+
+ P(versicolor) = 0.0000
+
+ P(virginica) = 0.0000
+
+ --> Predicted Class: versicolor
+
+---- PRIOR PROBABILITIES P(class) LEARNED FROM TRAINING DATA ----
+
+P(setosa) = 0.33333333333333
+
+P(versicolor) = 0.34166666666667
+
+P(virginica) = 0.32500000000000
+
+Sample 5: [6.8 2.8 4.8 1.4]
+
+ P(setosa) = 0.0000
+
+ P(versicolor) = 0.0000
+
+ P(virginica) = 0.0000
+
+ --> Predicted Class: versicolor
+
+---- PRIOR PROBABILITIES P(class) LEARNED FROM TRAINING DATA ----
+
+P(setosa) = 0.33333333333333
+
+P(versicolor) = 0.34166666666667
+
+P(virginica) = 0.32500000000000
+
+7c) Evaluate the accuracy of the model on test data and analyze the results.
+
+Solution:
+
+from sklearn.datasets import load_iris
+
+from sklearn.model_selection import train_test_split
+
+from sklearn.naive_bayes import GaussianNB
+
+from sklearn.metrics import accuracy_score,confusion_matrix, classification_report
+
+data = load_iris()
+
+X = data.data 
+
+y = data.target
+
+class_names = data.target_names
+
+X_train , X_test, y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=0)
+
+model = GaussianNB()
+
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+accuracy = accuracy_score(y_test, y_pred)
+
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+report = classification_report(y_test,y_pred,target_names = class_names)
+
+print("\n---- EVALUATION ON TEST DATA ----")
+
+print(f"Accuracy: {accuracy *  100:.2f}%")
+
+print("\nConfusion Matrix:")
+
+print(conf_matrix)
+
+print("\nClassification Report:")
+
+print(report)
+
+print("---- ANALYSIS OF RESULTS ----")
+
+misclassified = sum(y_test != y_pred)
+
+print(f"Total test samples : {len(y_test)}")
+
+print(f"Correctly Classified : {len(y_test)-misclassified}")
+
+print(f" Misclassified: {misclassified}")
+
+if misclassified > 0:
+
+    print("\nMisclassified Sample Details:")
+
+    for i in range(len(y_test)):
+
+        if y_test[i] != y_pred[i]:
+
+            print(f"Features: {X_test[i]} Actual: {class_names[y_test[i]]} Predicted: {class_names[y_pred[i]]}")
+
+            print("\nNo misclassfications - model achieved perfect accuracy on this test set.")
+
+Output:
+
+---- EVALUATION ON TEST DATA ----
+
+Accuracy: 96.67%
+
+Confusion Matrix:
+
+[[11  0  0]
+
+ [ 0 13  0]
+
+ [ 0  1  5]]
+
+Classification Report:
+
+              precision    recall  f1-score   support
+
+      setosa       1.00      1.00      1.00        11
+
+  versicolor       0.93      1.00      0.96        13
+
+   virginica       1.00      0.83      0.91         6
+
+    accuracy                           0.97        30
+
+   macro avg       0.98      0.94      0.96        30
+
+weighted avg       0.97      0.97      0.97        30
+
+---- ANALYSIS OF RESULTS ----
+
+Total test samples : 30
+
+Correctly Classified : 29
+
+ Misclassified: 1
+
+Misclassified Sample Details:
+
+Features: [6.1 2.6 5.6 1.4] Actual: virginica Predicted: versicolor
+
+No misclassfications - model achieved perfect accuracy on this test set.
+
+
+
+########################################################################################################
+
+
+
+
+Practical 8: K-Nearest Neighbors (K-NN)
+1. Implement the K-NN algorithm for classification or regression.
+2. Apply the K-NN algorithm to a given dataset and predict the class or value for test data.
+3. Evaluate the accuracy or error of the predictions and analyze the results.
+
+8a) Implement the K-NN algorithm for classification or regression.
+Solution:
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+data = load_iris()
+X = data.data
+y = data.target 
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+k = 5
+model = KNeighborsClassifier(n_neighbors=k)
+model.fit(X_train, y_train)
+
+print("----- K-NN model TRAINED SUCCESSFULLY -----")
+print(f"Value of K used: {k}")
+
+y_pred = model.predict(X_test)
+print("\nActual Labels   :", y_test)
+print("Predicted Labels:", y_pred)
+
+accuracy = accuracy_score(y_test, y_pred)
+print(f"\nAccuracy : {accuracy * 100:.2f}%")
+
+Output:
+----- K-NN model TRAINED SUCCESSFULLY -----
+Value of K used: 5
+
+Actual Labels   : [1 0 2 1 1 0 1 2 1 1 2 0 0 0 0 1 2 1 1 2 0 2 0 2 2 2 2 2 0 0]
+Predicted Labels: [1 0 2 1 1 0 1 2 1 1 2 0 0 0 0 1 2 1 1 2 0 2 0 2 2 2 2 2 0 0]
+
+Accuracy: 100.00%
+ 8b) Apply the K-NN algorithm to a given dataset and predict the class or value for test data.
+Solution:
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+
+data = load_iris()
+X = data.data
+y = data.target 
+class_names = data.target_names
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+scaler =  StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+k = 5
+model = KNeighborsClassifier(n_neighbors=k)
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+print("---- PREDICTIONS ON TEST DATA ----")
+
+for i in range(10):
+    actual = class_names[y_test[i]]
+    predicted = class_names[y_pred[i]]
+    print(f"Sample {i+1}: Actual = {actual:<12} Predicted = {predicted:<12} {'correct' if actual == predicted else 'wrong'}")
+
+new_sample = [[5.0,3.4,1.5,0.2]]
+
+new_sample_scaled = scaler.transform(new_sample)
+new_pred = model.predict(new_sample_scaled)
+
+print("\n ---- PREDICTED FOR A NEW UNSEEN SAMPLE ----")
+print(f"input Features: {new_sample[0]}")
+print(f"Predicted Class: {class_names[new_pred[0]]}")
+Output:
+ 
+ 8c) Evaluate the accuracy of the model on test data and analyze the results.
+Solution:
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+data = load_iris()
+X = data.data
+y = data.target 
+class_names = data.target_names
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=1
+)
+
+scaler =  StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+k = 5
+model = KNeighborsClassifier(n_neighbors=k)
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+accuracy = accuracy_score(y_test, y_pred)
+conf_matrix = confusion_matrix(y_test, y_pred)
+report = classification_report(y_test, y_pred, target_names=class_names)
+
+print("---- EVALUATION ON TEST DATA ----")
+print(f"Accuracy: {accuracy * 100:.2f}%")
+
+print("\nConfusion Matrix:")
+print(conf_matrix)
+
+print("\n Classification Report:")
+print(report)
+
+print("---- ANALYSIS OF RESULTS ----")
+misclassified = sum(y_test != y_pred)
+print(f"Total test samples: {len(y_test)}")
+print(f"Correctly classified {len(y_test)-misclassified}")
+print(f"Misclassified samples: {misclassified}")
+
+if misclassified > 0:
+    print("\nMisclassified Sample Details:")
+    for i in range(len(y_test)):
+        if y_test[i] != y_pred[i]:
+            print(f"Actual: {class_names[y_test]} Predicted: {class_names[y_pred[i]]}")
+else:
+    print("\nNo misclassifications - model achieved perfect accuracy on this test set.")
+
+print("\n---- ACCURACY FOR DIFFERENT VALUES OF K ----")
+for k_val in [1, 3, 5, 7, 9]:
+    knn_temp = KNeighborsClassifier(n_neighbors=k_val)
+    knn_temp.fit(X_train, y_train)
+    acc_temp = accuracy_score(y_test, knn_temp.predict(X_test))
+    print(f"K = {k_val} -> Accuracy = {acc_temp * 100:.2f}%")
+
+Solution:
+---- EVALUATION ON TEST DATA ----
+Accuracy: 96.67%
+Confusion Matrix:
+[[11  0  0]
+ [ 0 12  1]
+ [ 0  0  6]]
+
+ Classification Report:
+              precision    recall  f1-score   support
+
+      setosa       1.00      1.00      1.00        11
+  versicolor       1.00      0.92      0.96        13
+   virginica       0.86      1.00      0.92         6
+
+    accuracy                           0.97        30
+   macro avg       0.95      0.97      0.96        30
+weighted avg       0.97      0.97      0.97        30
+
+
+
+---- ANALYSIS OF RESULTS ----
+Total test samples: 30
+Correctly classified 29
+Misclassified samples: 1
+
+Misclassified Sample Details:
+Actual: ['setosa' 'versicolor' 'versicolor' 'setosa' 'virginica' 'versicolor'
+ 'virginica' 'setosa' 'setosa' 'virginica' 'versicolor' 'setosa'
+ 'virginica' 'versicolor' 'versicolor' 'setosa' 'versicolor' 'versicolor'
+ 'setosa' 'setosa' 'versicolor' 'versicolor' 'versicolor' 'setosa'
+ 'virginica' 'versicolor' 'setosa' 'setosa' 'versicolor' 'virginica'] Predicted: virginica
+
+---- ACCURACY FOR DIFFERENT VALUES OF K ----
+K = 1 -> Accuracy = 100.00%
+K = 3 -> Accuracy = 100.00%
+K = 5 -> Accuracy = 96.67%
+K = 7 -> Accuracy = 96.67%
+K = 9 -> Accuracy = 100.00%
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+Practical 9: Association rule mining
+
+1. Implement the Association rule mining algorithm (e.g Apriori ) to find frequent itemsets.
+
+2. Apply the K-NN algorithm to a given dataset and predict the class or value for test data.
+
+3. Evaluate the accuracy or error of the predictions and analyze the results.
+
+9a) Implement the Association rule mining algorithm (e.g Apriori ) to find frequent itemsets.
+
+Solution:
+
+from itertools import combinations 
+
+from collections import Counter
+
+# transaction dataset
+
+transactions = [
+
+    {"Milk", "Butter" , "Butter"},
+
+    {"Milk" , "Bread"},
+
+    {"Milk" , "Butter"},
+
+    {"Bread" , "Butter"},
+
+    {"Milk" , "Bread" , "Butter"}
+
+]
+
+min_support = 0.60
+
+def calculate_support(itemset):
+
+    count = sum(1 for transaction in transactions if itemset.issubset (transaction))
+
+    return count / len(transactions)
+
+# Apriori algorithm
+
+def apriori(transactions, min_support):
+
+    items = sorted(set().union (*transactions))
+
+    current_itemsets = [{item} for item in items]
+
+    frequent_itemsets = []
+
+    
+
+    while current_itemsets:
+
+        frequent = []
+
+        for itemset in current_itemsets:
+
+            support = calculate_support(itemset)
+
+            
+
+            if support >= min_support:
+
+                frequent.append((itemset, support))
+
+        if not frequent:
+
+            break
+
+        
+
+        frequent_itemsets.extend(frequent)
+
+        
+
+        next_candidates = set()
+
+        
+
+        for i in range(len(frequent)):
+
+            for j in range(i+1, len(frequent)):
+
+                union_set = frequent[i][0] | frequent[j][0]
+
+                if len(union_set) == len(frequent[0][0])+1:
+
+                    next_candidates.add(frozenset(union_set))
+
+                    
+
+            current_itemsets = [set(itemset) for itemset in next_candidates]
+
+        return frequent_itemsets
+
+    
+
+result = apriori(transactions, min_support)
+
+print("Frequent Itemsets:")
+
+print("------------------")
+
+for itemset, support in result:
+
+    print(f"{set(itemset)} -> Support: {support:.2f}")
+
+Output:
+
+Frequent Itemsets:
+
+----------------------
+
+{'Bread'} -> Support: 0.80
+
+{'Butter'} -> Support: 0.80
+
+{'Milk'} -> Support: 0.80
+
+{'Butter', 'Bread'} -> Support: 0.60
+
+{'Milk', 'Butter'} -> Support: 0.60
+
+{'Milk', 'Bread'} -> Support: 0.60
+
+9b) Generate association rules from the frequent itemsets and calculate their support and confidence.
+
+Solution:
+
+from itertools import combinations
+
+transactions = [
+
+    {"Milk", "Bread", "Butter"},
+
+    {"Milk", "Bread"},
+
+    {"Milk", "Butter"},
+
+    {"Bread", "Butter"},
+
+    {"Milk", "Bread", "Butter"}
+
+]
+
+min_support = 0.60
+
+def support(itemset):
+
+    count = 0
+
+    for transaction in transactions:
+
+         if itemset.issubset(transaction):
+
+             count += 1
+
+    return count / len(transactions)
+
+items = sorted(set().union(*transactions))
+
+frequent_itemsets = []
+
+for item in items:
+
+    itemset= {item}
+
+    s = support(itemset)
+
+    if s >= min_support:
+
+        frequent_itemsets.append(itemset)
+
+for pair in combinations(items,2):
+
+    itemset = set(pair)
+
+    s = support(itemset)
+
+    
+
+    if s>=min_support:
+
+        frequent_itemsets.append(itemset)
+
+print("Frequent Itemsets:")
+
+print("----------------------")
+
+for itemset in frequent_itemsets:
+
+    if len(itemset) < 2:
+
+        continue
+
+    items_list = list(itemset)
+
+    
+
+    for r in range(1, len(items_list)):
+
+        for antecedent_tuple in combinations(items_list, r):
+
+            antecedent = set(antecedent_tuple)
+
+            consequent = itemset - antecedent
+
+            
+
+            support_rule = support(itemset)
+
+            confidence = ( support(itemset) / support(antecedent) )
+
+            
+
+            print(
+
+                f"{antecedent} -> {consequent}"
+
+                f"| Support: {support_rule:.2f}"
+
+                f"| Confidence: {confidence:.2f}"                
+
+            )
+
+Solution:
+
+Frequent Itemsets:
+
+----------------------
+
+{'Butter'} -> {'Bread'}| Support: 0.60| Confidence: 0.75
+
+{'Bread'} -> {'Butter'}| Support: 0.60| Confidence: 0.75
+
+{'Milk'} -> {'Bread'}| Support: 0.60| Confidence: 0.75
+
+{'Bread'} -> {'Milk'}| Support: 0.60| Confidence: 0.75
+
+{'Milk'} -> {'Butter'}| Support: 0.60| Confidence: 0.75
+
+{'Butter'} -> {'Milk'}| Support: 0.60| Confidence: 0.75
+
+    
+
+    
+
+9c.Interpret and analyze the discovered association rules.
+
+Solution:
+
+rules = [
+
+({"Bread"} , {"Butter"},0.60,0.75),
+
+({"Butter"} , {"Bread"}, 0.60, 0.75),
+
+({"Bread"} , {"Milk"}, 0.60, 0.75),
+
+({"Milk"} , {"Bread"}, 0.60, 0.75),
+
+({"Butter"} , {"Milk"}, 0.60, 0.75),
+
+({"Milk"} , {"Butter"}, 0.60, 0.75)
+
+]
+
+min_confidence = 0.70
+
+print("Association Rule Analysis")
+
+print("-------------------------")
+
+for antecedent, consequent, support, confidence in rules:
+
+    
+
+    if confidence >= min_confidence:
+
+        strength = "Strong Rule"
+
+    else:
+
+        strength = "Weak Rule"
+
+    print(
+
+        f"{antecedent} -> {consequent}"
+
+        f" | Support = {support:.2f}"
+
+        f" | Confidence = {confidence:.2f}"
+
+        f" | {strength}"
+
+    )
+
+    
+
+print("\nInterpretation:")
+
+print("1. Bread -> Butter: Customers buying Bread have a 75% chance")
+
+print(" of buying Butter.")
+
+    
+
+print("2. Bread -> Milk: Customers buying Bread have a 75% chance")
+
+print(" of buying Milk.")    
+
+    
+
+print("3. Milk -> Bread: Customers buying Milk have a 75% chance")
+
+print(" of buying Bread.")      
+
+print("4. Milk -> Butter: Customers buying Milk have a 75% chance")
+
+print(" of buying Butter.")  
+
+print("5. Butter -> Bread: Customers buying Butter have a 75% chance")
+
+print(" of buying Bread.")
+
+print("6. Butter -> Milk: Customers buying Butter have a 75% chance")
+
+print(" of buying Milk.")
+
+print("\nOverall Analysis:")
+
+print("All rules have 60% support and 75% confidence.")
+
+print("Therefore, all discovered rules satisfy the minimum")
+
+print("support of 60% and minimum confidence of 70%.")
+
+Output:
+
+Association Rule Analysis
+
+-------------------------
+
+{'Bread'} -> {'Butter'} | Support = 0.60 | Confidence = 0.75 | Strong Rule
+
+{'Butter'} -> {'Bread'} | Support = 0.60 | Confidence = 0.75 | Strong Rule
+
+{'Bread'} -> {'Milk'} | Support = 0.60 | Confidence = 0.75 | Strong Rule
+
+{'Milk'} -> {'Bread'} | Support = 0.60 | Confidence = 0.75 | Strong Rule
+
+{'Butter'} -> {'Milk'} | Support = 0.60 | Confidence = 0.75 | Strong Rule
+
+{'Milk'} -> {'Butter'} | Support = 0.60 | Confidence = 0.75 | Strong Rule
+
+Interpretation:
+
+1. Bread -> Butter: Customers buying Bread have a 75% chance
+
+ of buying Butter.
+
+2. Bread -> Milk: Customers buying Bread have a 75% chance
+
+ of buying Milk.
+
+3. Milk -> Bread: Customers buying Milk have a 75% chance
+
+ of buying Bread.
+
+4. Milk -> Butter: Customers buying Milk have a 75% chance
+
+ of buying Butter.
+
+5. Butter -> Bread: Customers buying Butter have a 75% chance
+
+ of buying Bread.
+
+6. Butter -> Milk: Customers buying Butter have a 75% chance
+
+ of buying Milk.
+
+Overall Analysis:
+
+All rules have 60% support and 75% confidence.
+
+Therefore, all discovered rules satisfy the minimum
+
+support of 60% and minimum confidence of 70%.
+
+
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Practical 10: Demo of OpenAI/TensorFlow Tools
+Aim: Perform a demonstration or mini-project showcasing the capabilities of the tools.
+
+Solution:
+import tensorflow as tf
+import matplotlib.pyplot as plt
+import numpy as np
+
+print("Loading MNIST dataset...")
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+
+print("Training images:", x_train.shape)
+print("Testing images:", x_test.shape)
+
+# Normalize both training and testing pixel values to be between 0 and 1
+x_train = x_train / 255.0
+x_test = x_test / 255.0
+
+# Build the model using modern Keras Input syntax
+model = tf.keras.Sequential([
+    tf.keras.Input(shape=(28, 28)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(128, activation="relu"),
+    tf.keras.layers.Dense(10, activation="softmax")
+])
+
+model.compile(
+    optimizer="adam",
+    loss="sparse_categorical_crossentropy",  # Fixed spelling here
+    metrics=["accuracy"]
+)
+
+print("Training the model...")
+model.fit(
+    x_train,
+    y_train,
+    epochs=5
+)
+
+print("\nTesting the model...")
+loss, accuracy = model.evaluate(x_test, y_test, verbose=0)
+
+print("Test Accuracy:", accuracy * 100, "%")
+
+image_number = 0
+image = x_test[image_number]
+
+prediction = model.predict(
+    np.expand_dims(image, axis=0),
+    verbose=0
+)
+
+predicted_digit = np.argmax(prediction)
+actual_digit = y_test[image_number]
+
+print("\nPrediction Result")
+print("-------------------")
+print("Predicted Digit:", predicted_digit)
+print("Actual Digit:", actual_digit)
+
+plt.imshow(image, cmap="gray")
+plt.title(
+    "Predicted: " + str(predicted_digit) +
+    " | Actual: " + str(actual_digit)
+)
+plt.axis("off")
+plt.show()
+
+Ouput:
+Training the model...
+Epoch 1/5
+1875/1875 ━━━━━━━━━━━━━━━━━━━━ 3s 1ms/step - accuracy: 0.9257 - loss: 0.2594     
+Epoch 2/5
+1875/1875 ━━━━━━━━━━━━━━━━━━━━ 2s 1ms/step - accuracy: 0.9675 - loss: 0.1096  
+Epoch 3/5
+1875/1875 ━━━━━━━━━━━━━━━━━━━━ 2s 1ms/step - accuracy: 0.9776 - loss: 0.0737  
+Epoch 4/5
+1875/1875 ━━━━━━━━━━━━━━━━━━━━ 2s 1ms/step - accuracy: 0.9833 - loss: 0.0549  
+Epoch 5/5
+1875/1875 ━━━━━━━━━━━━━━━━━━━━ 2s 1ms/step - accuracy: 0.9872 - loss: 0.0417  
+
+Testing the model...
+Test Accuracy: 97.46999740600586 %
+
+Prediction Result
+-------------------
+Predicted Digit: 7
+Actual Digit: 7
+
+
